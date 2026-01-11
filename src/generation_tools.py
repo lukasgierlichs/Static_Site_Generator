@@ -24,10 +24,13 @@ def extract_title(markdown: str) -> str:
 # print(extract_title("# Hello"))  # Output: "Hello"
 # print(extract_title("## Not a title\n# Actual Title"))  # Output: "Actual Title"
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath='/'):
     """
     Generates a page by reading markdown content from 'from_path',
     applying a template from 'template_path', and writing the result to 'dest_path'.
+
+    If `basepath` is provided, replaces occurrences of `href="/` and `src="/` in
+    the generated page with the basepath (normalized to include a trailing '/').
     """
     print(f"Generating page from {from_path} to {dest_path} using template {template_path}")
 
@@ -45,6 +48,18 @@ def generate_page(from_path, template_path, dest_path):
         .replace("{{ Title }}", title)
         .replace("{{ Content }}", html)
     )
+
+    # normalize basepath to ensure it starts with '/' and ends with '/'
+    if not basepath.startswith('/'):
+        basepath = '/' + basepath
+    if not basepath.endswith('/'):
+        basepath_for_replace = basepath + '/'
+    else:
+        basepath_for_replace = basepath
+
+    # replace root-relative href/src (double-quoted) with basepath-prefixed versions
+    final_page = final_page.replace('href="/', f'href="{basepath_for_replace}')
+    final_page = final_page.replace('src="/', f'src="{basepath_for_replace}')
 
     # make sure dest_path directories exist and create them if not
     dest_dir = os.path.dirname(dest_path)
