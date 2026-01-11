@@ -36,5 +36,10 @@ def text_node_to_html_node(text_node: "TextNode") -> HTMLNode:
         return LeafNode(tag="em", value=text_node.text)
     elif text_node.text_type == TextType.CODE_TEXT:
         return LeafNode(tag="code", value=text_node.text)
+    elif text_node.text_type == TextType.IMAGES:
+        if text_node.url is None:
+            raise ValueError("URL must be provided for image text nodes")
+        # Use empty value for <img> since it's a void element; alt is provided in props
+        return LeafNode(tag="img", value="", props={"src": text_node.url, "alt": text_node.text})
     else:  # Plain text
         return LeafNode(tag=None, value=text_node.text)

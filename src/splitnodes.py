@@ -147,6 +147,7 @@ def text_to_text_node(text: str) -> list[TextNode]:
     # Apply formatting splitters in order
     nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
     nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
     nodes = split_nodes_delimiter(nodes, "`", TextType.CODE_TEXT)
 
     # Apply image and link splitters

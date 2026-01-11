@@ -1,0 +1,34 @@
+import unittest
+
+from generation_tools import extract_title
+
+class TestExtractTitle(unittest.TestCase):
+    def test_extracts_h1_header(self):
+        markdown = "# This is a Title\nSome other text."
+        title = extract_title(markdown)
+        self.assertEqual(title, "This is a Title")
+    
+    def test_extracts_h1_header_without_space(self):
+        markdown = "#This is a Title\nSome other text."
+        title = extract_title(markdown)
+        self.assertEqual(title, "This is a Title")
+    
+    def test_raises_exception_when_no_h1(self):
+        markdown = "## This is not a title\nSome other text."
+        with self.assertRaises(Exception) as context:
+            extract_title(markdown)
+        self.assertEqual(str(context.exception), "No H1 header found in the provided markdown.")
+    
+    def test_extracts_first_h1_header(self):
+        markdown = "# First Title\n## Subtitle\n# Second Title"
+        title = extract_title(markdown)
+        self.assertEqual(title, "First Title")
+    
+    def test_no_h1_but_other_headers(self):
+        markdown = "## Subtitle\n### Sub-subtitle"
+        with self.assertRaises(Exception) as context:
+            extract_title(markdown)
+        self.assertEqual(str(context.exception), "No H1 header found in the provided markdown.")
+
+if __name__ == "__main__":
+    unittest.main()
